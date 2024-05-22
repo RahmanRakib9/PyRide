@@ -13,3 +13,18 @@ class USer(ABC):
     @abstractmethod
     def displayProfile(self):
         raise NotImplementedError
+
+
+class Rider(USer):
+    def __init__(self, name, email, nationalId) -> None:
+        super().__init__(name, email, nationalId)
+
+    def displayProfile(self):
+        print(f'Rider with name: {self.name} and email: {self.email}')
+
+    def requestRide(self, location, destination):
+        if not self.currentRide:
+            # TODO: Set ride properly
+            # TODO : set ride match
+            ride_request = None
+            self.currentRide = None
