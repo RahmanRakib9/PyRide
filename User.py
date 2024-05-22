@@ -40,3 +40,13 @@ class Driver(USer):
 
     def acceptRide(self, ride):
         ride.setDriver(self)
+
+
+class Ride:
+    def __init__(self, startLocation, endLocation) -> None:
+        self.startLocation = startLocation
+        self.endLocation = endLocation
+        self.driver = None
+        self.startTime = None
+        self.endTime = None
+        self.estimatedFare = None
