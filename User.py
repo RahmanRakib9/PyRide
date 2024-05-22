@@ -28,3 +28,15 @@ class Rider(USer):
             # TODO : set ride match
             ride_request = None
             self.currentRide = None
+
+
+class Driver(USer):
+    def __init__(self, name, email, nationalId, currentLocation) -> None:
+        super().__init__(name, email, nationalId)
+        self.currentLocation = currentLocation
+
+    def displayProfile(self):
+        print(f'Driver With name :{self.name} and email: {self.email}')
+
+    def acceptRide(self, ride):
+        ride.setDriver(self)
