@@ -94,3 +94,37 @@ class RideMatching:
             ride = Ride(rideRequest.currentLocation, rideRequest.endLocation)
             driver.acceptRide(ride)
             return ride
+
+
+class Vehicle(ABC):
+    speed = {
+        'car': 60,
+        'bike': 40,
+        'cng': 30
+    }
+
+    def __init__(self, vehicleType, licensePlate, rate) -> None:
+        self.vehicleType = vehicleType
+        self.licensePlate = licensePlate
+        self.rate = rate
+        self.status = "available"
+
+    @abstractmethod
+    def startDrive(self):
+        pass
+
+
+class Car(Vehicle):
+    def __init__(self, vehicleType, licensePlate, rate) -> None:
+        super().__init__(vehicleType, licensePlate, rate)
+
+    def startDrive(self):
+        self.status = "unavailable"
+
+
+class Bike(Vehicle):
+    def __init__(self, vehicleType, licensePlate, rate) -> None:
+        super().__init__(vehicleType, licensePlate, rate)
+
+    def startDrive(self):
+        self.status = "unavailable"
