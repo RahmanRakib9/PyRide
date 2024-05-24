@@ -2,6 +2,20 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 
+class RideSharing:
+    def __init__(self, companyName) -> None:
+        self.companyName = companyName
+        self.riders = []
+        self.drivers = []
+        self.rides = []
+
+    def addRider(self, rider):
+        self.riders.append(rider)
+
+    def addDriver(self, driver):
+        self.drivers.append(driver)
+
+
 class USer(ABC):
     def __init__(self, name, email, nationalId) -> None:
         self.name = name
@@ -17,9 +31,9 @@ class USer(ABC):
 
 
 class Rider(USer):
-    def __init__(self, name, email, nationalId, currentLocation) -> None:
+    def __init__(self, name, email, nationalId, currentLocation, initialAmount) -> None:
         self.currentRide = None
-        self.wallet = 0
+        self.wallet = initialAmount
         self.currentLocation = currentLocation
         super().__init__(name, email, nationalId)
 
@@ -33,7 +47,7 @@ class Rider(USer):
     def updateLocation(self, currentLocation):
         self.currentLocation = currentLocation
 
-    def requestRide(self, location, destination):
+    def requestRide(self, destination):
         if not self.currentRide:
             #  Set ride properly
             #  Set ride match
