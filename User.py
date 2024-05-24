@@ -35,10 +35,11 @@ class Rider(USer):
 
     def requestRide(self, location, destination):
         if not self.currentRide:
-            # TODO: Set ride properly
-            # TODO : set ride match
-            ride_request = None
-            self.currentRide = None
+            #  Set ride properly
+            #  Set ride match
+            ride_request = RideRequest(self, destination)
+            ride_matcher = RideMatching()
+            self.currentRide = ride_matcher.findDriver(ride_request)
 
 
 class Driver(USer):
@@ -74,3 +75,22 @@ class Ride:
         self.endTime = datetime.now()
         self.rider.wallet -= self.estimatedFare
         self.driver.wallet += self.estimatedFare
+
+
+class RideRequest:
+    def __init__(self, rider, endLocation) -> None:
+        self.rider = rider
+        self.endLocation = endLocation
+
+
+class RideMatching:
+    def __init__(self) -> None:
+        self.availableDrivers = []
+
+    def findDriver(self, rideRequest):
+        if len(self.availableDrivers) > 0:
+            # Find the closest driver of the rider
+            driver = self.availableDrivers[0]
+            ride = Ride(rideRequest.currentLocation, rideRequest.endLocation)
+            driver.acceptRide(ride)
+            return ride
