@@ -5,8 +5,11 @@ from driver import Driver
 # Running the application
 pyRide = RideSharing("PyRide")
 
+# Print the welcome message first
+print(pyRide)
+
 # Create riders and drivers
-rider1 = Rider("Rakib", "rahman.rakib@gmail.com", 222, 100)
+rider1 = Rider("Rakib", "rahman@gmail.com", 222, 100)
 rider1.currentLocation = "Mirpur-01"
 driver1 = Driver("Sourav", "saurab@gmail.com", 64)
 
@@ -21,4 +24,5 @@ rider1.requestRide(pyRide, "Uttara")
 if rider1.currentRide:
     rider1.currentRide.endRide()
 
-print(pyRide)
+# Print the final conclusion message
+print("Thanks for being with US 😃")
