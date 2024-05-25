@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
 from datetime import datetime
 
 
 class RideSharing:
-    def __init__(self, companyName) -> None:
+    def __init__(self, companyName):
         self.companyName = companyName
         self.riders = []
         self.drivers = []
@@ -15,130 +14,82 @@ class RideSharing:
     def addDriver(self, driver):
         self.drivers.append(driver)
 
+    def __repr__(self):
+        return f'Welcome to {self.companyName} Application with {len(self.riders)} riders and {len(self.drivers)} drivers'
 
-class USer(ABC):
-    def __init__(self, name, email, nationalId) -> None:
+
+class User:
+    def __init__(self, name, email, nationalId):
         self.name = name
         self.email = email
-        # TODO : generate id dynamically
-        self.__id = 0
-        self.__nationalId = nationalId
-        self.__wallet = 0
-
-    @abstractmethod
-    def displayProfile(self):
-        raise NotImplementedError
-
-
-class Rider(USer):
-    def __init__(self, name, email, nationalId, currentLocation, initialAmount) -> None:
-        self.currentRide = None
-        self.wallet = initialAmount
-        self.currentLocation = currentLocation
-        super().__init__(name, email, nationalId)
-
-    def displayProfile(self):
-        print(f'Rider with name: {self.name} and email: {self.email}')
-
-    def loadCash(self, amount):
-        if amount > 0:
-            self.wallet += amount
-
-    def updateLocation(self, currentLocation):
-        self.currentLocation = currentLocation
-
-    def requestRide(self, destination):
-        if not self.currentRide:
-            #  Set ride properly
-            #  Set ride match
-            ride_request = RideRequest(self, destination)
-            ride_matcher = RideMatching()
-            self.currentRide = ride_matcher.findDriver(ride_request)
-
-
-class Driver(USer):
-    def __init__(self, name, email, nationalId, currentLocation) -> None:
-        super().__init__(name, email, nationalId)
-        self.currentLocation = currentLocation
+        self.nationalId = nationalId
         self.wallet = 0
 
     def displayProfile(self):
-        print(f'Driver With name :{self.name} and email: {self.email}')
+        print(f'UserName: {self.name}, UserEmail: {self.email}')
 
-    def acceptRide(self, ride):
-        ride.setDriver(self)
+
+class Rider(User):
+    def __init__(self, name, email, nationalId, initialAmount):
+        super().__init__(name, email, nationalId)
+        self.wallet = initialAmount
+        self.currentRide = None
+
+    def requestRide(self, rideSharing, destination):
+        if not self.currentRide:
+            for driver in rideSharing.drivers:
+                if driver.isAvailable():
+                    self.currentRide = Ride(self, driver, destination)
+                    rideSharing.rides.append(self.currentRide)
+                    driver.currentRide = self.currentRide
+                    print(
+                        f'Ride requested by {self.name} to {destination} with driver {driver.name}')
+                    break
+            else:
+                print("No available drivers at the moment.")
+
+
+class Driver(User):
+    def __init__(self, name, email, nationalId):
+        super().__init__(name, email, nationalId)
+        self.currentRide = None
+
+    def isAvailable(self):
+        return self.currentRide is None
 
 
 class Ride:
-    def __init__(self, startLocation, endLocation) -> None:
-        self.startLocation = startLocation
-        self.endLocation = endLocation
-        self.driver = None
-        self.rider = None
-        self.startTime = None
-        self.endTime = None
-        self.estimatedFare = None
-
-    def setDriver(self, driver):
+    def __init__(self, rider, driver, destination):
+        self.rider = rider
         self.driver = driver
-
-    def startRide(self):
+        self.startLocation = rider.currentLocation
+        self.destination = destination
         self.startTime = datetime.now()
 
-    def endRide(self, rider, amount):
+    def endRide(self):
         self.endTime = datetime.now()
-        self.rider.wallet -= self.estimatedFare
-        self.driver.wallet += self.estimatedFare
+        self.rider.currentRide = None
+        self.driver.currentRide = None
+        print(f'Ride from {self.startLocation} to {self.destination} ended.')
 
 
-class RideRequest:
-    def __init__(self, rider, endLocation) -> None:
-        self.rider = rider
-        self.endLocation = endLocation
+# Running the application
+pyRide = RideSharing("PyRide")
 
+# Create riders and drivers
+rider1 = Rider("Rahman", "rahman@gmail.com", 222, 100)
+rider1.currentLocation = "Dhanmondi"
+driver1 = Driver("Sourav", "saurab@gmail.com", 64)
 
-class RideMatching:
-    def __init__(self) -> None:
-        self.availableDrivers = []
+# Add users to the application
+pyRide.addRider(rider1)
+pyRide.addDriver(driver1)
 
-    def findDriver(self, rideRequest):
-        if len(self.availableDrivers) > 0:
-            # Find the closest driver of the rider
-            driver = self.availableDrivers[0]
-            ride = Ride(rideRequest.currentLocation, rideRequest.endLocation)
-            driver.acceptRide(ride)
-            return ride
+# Rider requests a ride
+rider1.requestRide(pyRide, "Uttara")
 
+# End the ride
+if rider1.currentRide:
+    rider1.currentRide.endRide()
 
-class Vehicle(ABC):
-    speed = {
-        'car': 60,
-        'bike': 40,
-        'cng': 30
-    }
-
-    def __init__(self, vehicleType, licensePlate, rate) -> None:
-        self.vehicleType = vehicleType
-        self.licensePlate = licensePlate
-        self.rate = rate
-        self.status = "available"
-
-    @abstractmethod
-    def startDrive(self):
-        pass
-
-
-class Car(Vehicle):
-    def __init__(self, vehicleType, licensePlate, rate) -> None:
-        super().__init__(vehicleType, licensePlate, rate)
-
-    def startDrive(self):
-        self.status = "unavailable"
-
-
-class Bike(Vehicle):
-    def __init__(self, vehicleType, licensePlate, rate) -> None:
-        super().__init__(vehicleType, licensePlate, rate)
-
-    def startDrive(self):
-        self.status = "unavailable"
+print(pyRide)
