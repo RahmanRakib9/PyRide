@@ -1,4 +1,3 @@
-# driver.py
 from user import User
 
 

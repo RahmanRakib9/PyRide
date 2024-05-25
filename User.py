@@ -1,4 +1,3 @@
-# user.py
 class User:
     def __init__(self, name, email, nationalId):
         self.name = name
