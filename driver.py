@@ -1,6 +1,5 @@
 from user import User
 
-
 class Driver(User):
     def __init__(self, name, email, nationalId):
         super().__init__(name, email, nationalId)

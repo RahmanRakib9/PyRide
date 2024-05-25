@@ -1,7 +1,6 @@
 from user import User
 from ride import Ride
 
-
 class Rider(User):
     def __init__(self, name, email, nationalId, initialAmount):
         super().__init__(name, email, nationalId)
